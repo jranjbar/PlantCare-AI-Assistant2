@@ -16,6 +16,16 @@ app.use(express.urlencoded({ limit: "20mb", extended: true }));
 // Global mock database file for persisting user garden/reminders
 const DB_PATH = path.join(process.cwd(), "user_garden_db.json");
 
+// Helper to get Telegram environment variables
+function getTelegramEnv() {
+  return process.env.TELEGRAM_TOKEN || process.env.TG_TOKEN || process.env.BOT_TOKEN || process.env.TELEGRAM_BOT_TOKEN || "";
+}
+
+// Helper to check Render external URL
+function getWebhookEnv() {
+  return process.env.RENDER_EXTERNAL_URL ? `${process.env.RENDER_EXTERNAL_URL}/api/telegram` : "";
+}
+
 // Helper to read database
 function readDB() {
   let db: any = { plants: [], notifications: [], cropPlans: [], subscription: null, telegramSettings: null };
@@ -41,13 +51,25 @@ function readDB() {
     };
   }
 
-  // Enforce default telegram settings if not present
+  // Enforce default telegram settings if not present, with environment fallbacks
+  const envTgToken = getTelegramEnv();
+  const envWebhook = getWebhookEnv();
+
   if (!db.telegramSettings) {
     db.telegramSettings = {
-      tgToken: "729402518:AAFlw9C_SampleToken",
-      webhookUrl: "https://my-plant-app.render.com/api/telegram",
+      tgToken: envTgToken || "729402518:AAFlw9C_SampleToken",
+      webhookUrl: envWebhook || "https://my-plant-app.render.com/api/telegram",
       customWelcomeMsg: "سلام به ربات تشخیص گیاه رویش‌بان خوش آمدید 🌿. تصویر گیاه را بفرستید تا فوراً آن را معرفی و عارضه‌یابی کنم."
     };
+  } else {
+    // If the DB has the placeholder token but we have a real environment variable set, override it!
+    if (envTgToken && (!db.telegramSettings.tgToken || db.telegramSettings.tgToken === "729402518:AAFlw9C_SampleToken" || db.telegramSettings.tgToken.includes("SampleToken"))) {
+      db.telegramSettings.tgToken = envTgToken;
+    }
+    // If the DB has the fallback webhook URL but we have a real Render URL, override it!
+    if (envWebhook && (!db.telegramSettings.webhookUrl || db.telegramSettings.webhookUrl.includes("my-plant-app.render.com") || db.telegramSettings.webhookUrl === "")) {
+      db.telegramSettings.webhookUrl = envWebhook;
+    }
   }
   return db;
 }
@@ -585,7 +607,8 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    const distPath = path.join(process.cwd(), "dist");
+    // server.cjs is built inside the dist folder, so __dirname matches the dist folder itself
+    const distPath = __dirname;
     app.use(express.static(distPath));
     app.get("*", (req, res) => {
       res.sendFile(path.join(distPath, "index.html"));

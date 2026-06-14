@@ -1682,182 +1682,318 @@ export default function App() {
 
           {/* 6. TAB: PERSONALIZE & BOT SETTINGS */}
           {activeTab === "personalize" && (
-            <div className="space-y-6">
+            <div className="space-y-8 animate-fade-in text-right">
               
-              {/* Top Premium Welcome Header */}
-              <div className="bg-gradient-to-l from-emerald-500/15 via-emerald-500/5 to-transparent backdrop-blur-md rounded-3xl p-6 border border-emerald-500/20 text-right relative overflow-hidden">
-                <div className="absolute top-[-20%] right-[-10%] w-44 h-44 bg-emerald-500/10 rounded-full blur-3xl animate-pulse" />
-                <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                  <div className="space-y-1">
-                    <span className="text-[10px] bg-emerald-500 text-black px-2.5 py-0.5 rounded-full font-extrabold uppercase select-none">اتصال پیشرفته ربات تلگرام</span>
-                    <h3 className="text-xl font-bold text-emerald-200 mt-2">شخصی‌سازی هوشمند و پایگاه راه‌اندازی ربات مزارع</h3>
-                    <p className="text-xs text-white/60 leading-relaxed max-w-xl">
-                      با همگام‌سازی توکن با سرور و کپی کردن قطعه کد اجرایی زیر، ربات شخصی تلگرام خودتان را مجهز به پردازش زنده گیاه‌پزشک هوشمند با مدل پیشرفته Gemini نمایید.
+              {/* Premium Welcome Header with Ambient Neon Glow */}
+              <div className="bg-gradient-to-l from-emerald-950/40 via-emerald-900/10 to-transparent backdrop-blur-xl rounded-3xl p-8 border border-emerald-500/20 text-right relative overflow-hidden shadow-2xl">
+                <div className="absolute top-[-50%] right-[-15%] w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute bottom-[-50%] left-[-15%] w-64 h-64 bg-teal-500/5 rounded-full blur-3xl" />
+                
+                <div className="relative z-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+                  <div className="space-y-2">
+                    <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
+                      <span className="w-2 h-2 bg-emerald-400 rounded-full animate-ping" />
+                      <span className="text-[10px] text-emerald-300 font-extrabold uppercase font-mono tracking-wider">سرویس وب‌هوک و بستر ابری فعال</span>
+                    </div>
+                    <h3 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 via-teal-100 to-white mt-1">شخصی‌سازی پیشرفته ربات تلگرام رویش‌بان</h3>
+                    <p className="text-xs text-white/70 leading-relaxed max-w-2xl">
+                      با تنظیم توکن ربات مزارع و کدهای مکمل، کانال ارتباطی مستقیمی میان تلگرام و هسته هوش مصنوعی رویش‌بان بسازید. در این صورت کاربران می‌توانند با ارسال ساده‌ی برگ گیاهان، نسخه درمانی دریافت کنند.
                     </p>
                   </div>
-                  <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2">
-                    <span className="w-2 h-2 bg-emerald-400 rounded-full animate-ping" />
-                    <span>سرویس دروازه وب‌هوک فعال است</span>
+                  
+                  <div className="flex gap-3">
+                    <a
+                      href="https://t.me/BotFather"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-[#122312] border border-emerald-500/30 hover:bg-emerald-500/25 text-emerald-300 px-4 py-3 rounded-2xl text-xs font-bold flex items-center gap-2 cursor-pointer transition-all"
+                    >
+                      <span>ورود به BotFather@</span>
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
                   </div>
                 </div>
               </div>
 
-              {/* Grid Section: Configuration Form vs Dynamic Code View */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 text-xs text-right">
+              {/* Grid Section: Configuration Form vs Interactive Live Phone Preview */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 
                 {/* Left Column: Config Panel Form (Grid span 5) */}
-                <div className="lg:col-span-5 bg-black/45 rounded-3xl p-6 border border-white/10 space-y-5 flex flex-col justify-between shadow-xl">
+                <div className="lg:col-span-5 bg-black/40 backdrop-blur-md rounded-3xl p-6 border border-white/10 space-y-6 shadow-2xl relative">
                   
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2 pb-3 border-b border-white/10">
+                  <div className="flex items-center gap-3 pb-4 border-b border-white/10">
+                    <div className="p-2 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
                       <Sliders className="w-5 h-5 text-emerald-400" />
-                      <div>
-                        <h4 className="font-extrabold text-sm text-white">پیکربندی هویت ربات مزارع</h4>
-                        <p className="text-[10px] text-white/40">تنظیم مستقیم اطلاعات بر روی هسته سرور مرکزی</p>
+                    </div>
+                    <div>
+                      <h4 className="font-extrabold text-base text-white">پیکربندی هویت ربات مزارع</h4>
+                      <p className="text-[11px] text-white/40">تنظیم بدون نقص اطلاعات بر روی دیتابیس هاب مرکزی</p>
+                    </div>
+                  </div>
+
+                  {/* Input Fields */}
+                  <div className="space-y-5 text-xs">
+                    
+                    {/* Token Form Group */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <label className="text-white/80 font-extrabold flex items-center gap-1.5">
+                          <span>توکن اختصاصی ربات تلگرام (Telegram Token):</span>
+                        </label>
+                        {tgToken && !tgToken.includes("SampleToken") ? (
+                          <span className="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20 font-semibold">پیکربندی شده</span>
+                        ) : (
+                          <span className="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-full border border-amber-500/20 font-semibold">نمونه موقت</span>
+                        )}
                       </div>
+                      <div className="group relative">
+                        <input
+                          type="text"
+                          value={tgToken}
+                          placeholder="729402518:AAFlw9C_SampleToken"
+                          onChange={(e) => setTgToken(e.value || e.target.value)}
+                          className="w-full bg-[#101410] border border-white/10 rounded-2xl p-3.5 text-xs text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none font-mono tracking-wider transition-all"
+                        />
+                      </div>
+                      <p className="text-[10px] text-white/40 leading-relaxed">
+                        توکن دریافتی خود را از ربات رسمی تلگرام BotFather کپی کرده و به فیلد بالا منتقل کنید.
+                      </p>
                     </div>
 
-                    {/* Token with show/hide or info */}
-                    <div className="space-y-1.5">
-                      <div className="flex justify-between items-center text-xs">
-                        <label className="text-white/80 font-bold">توکن اختصاصی ربات تلگرام (Bot Token):</label>
-                        <a href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer" className="text-emerald-400 font-medium hover:underline flex items-center gap-1">
-                          <span>دریافت از BotFather@</span>
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-                      </div>
-                      <input
-                        type="text"
-                        value={tgToken}
-                        placeholder="729402518:AAFlw9C_SampleToken"
-                        onChange={(e) => setTgToken(e.target.value)}
-                        className="w-full bg-[#101910] border border-white/10 rounded-xl p-3 text-xs text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none font-mono tracking-wider transition-all"
-                      />
-                    </div>
-
-                    {/* Webhook Endpoint with AutoFill Host helper */}
-                    <div className="space-y-1.5">
-                      <div className="flex justify-between items-center text-xs">
-                        <label className="text-white/80 font-bold">آدرس هوست و وب‌هوک رندر (Webhook Callback):</label>
+                    {/* Webhook Form Group */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <label className="text-white/80 font-extrabold">آدرس هوک وب رندر (Webhook Callback):</label>
                         <button
                           onClick={() => {
                             setWebhookUrl(`${window.location.origin}/api/telegram`);
-                            showToast("آدرس وب‌هوک با آدرس دامنه فعلی سایت جایگزین شد!", "info");
+                            showToast("آدرس وب‌هوک با دامنه اصلی سیستم هماهنگ شد! 🌱", "info");
                           }}
-                          className="bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-300 font-bold py-0.5 px-2 rounded-lg text-[10px] cursor-pointer transition-all"
+                          className="bg-emerald-500/10 hover:bg-emerald-500/25 border border-emerald-500/20 text-emerald-300 font-bold py-1 px-2.5 rounded-lg text-[10px] cursor-pointer transition-all active:scale-95"
                         >
-                          دریافت خودکار دامنه فعلی
+                          استفاده از دامنه فعلی
                         </button>
                       </div>
                       <input
                         type="text"
                         value={webhookUrl}
                         onChange={(e) => setWebhookUrl(e.target.value)}
-                        className="w-full bg-[#101910] border border-white/10 rounded-xl p-3 text-xs text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none font-mono text-left transition-all"
+                        className="w-full bg-[#101410] border border-white/10 rounded-2xl p-3.5 text-xs text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none font-mono text-left transition-all"
                       />
+                      <p className="text-[10px] text-white/40 leading-relaxed">
+                        وب‌هوک بستری است که بسته‌های ارسالی پیام‌رسان تلگرام را فوراً به سرور کلینیکال جهت پردازش هدایت می‌نماید.
+                      </p>
                     </div>
 
-                    {/* Welcome message text-area */}
-                    <div className="space-y-1.5">
-                      <label className="text-white/80 font-bold block">پیام خوش‌آمدگویی پیش‌فرض (/start):</label>
+                    {/* Welcome Message Textarea */}
+                    <div className="space-y-2">
+                      <label className="text-white/80 font-extrabold block">پیام خوش‌آمدگویی زمان باز شدن ربات (/start):</label>
                       <textarea
                         value={customWelcomeMsg}
                         onChange={(e) => setCustomWelcomeMsg(e.target.value)}
                         rows={3}
-                        className="w-full bg-[#101910] border border-white/10 rounded-xl p-3 text-xs text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none leading-relaxed transition-all"
-                        placeholder="پیامی که زمان وارد شدن کاربر ارسال می‌شود..."
+                        className="w-full bg-[#101410] border border-white/10 rounded-2xl p-3.5 text-xs text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none leading-relaxed transition-all"
+                        placeholder="سلام به مربی رباتیک رویش‌بان کشاورزی خوش آمدید..."
                       />
+                      <p className="text-[10px] text-white/40">
+                        پیامی که بلافاصله پس از فشردن دکمه راه اندازی ربات به چت تلگرام کاربر شلیک می‌شود.
+                      </p>
                     </div>
+
                   </div>
 
-                  {/* PROMINENT SUBMIT / SAVE ACTION BUTTON */}
-                  <div className="pt-4 border-t border-white/10 space-y-3">
+                  {/* Submit and database writing actions */}
+                  <div className="pt-5 border-t border-white/10 space-y-4">
                     <button
                       onClick={saveTelegramConfig}
-                      className="w-full bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 active:scale-[0.98] text-black font-extrabold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg shadow-emerald-950/20"
+                      disabled={loading}
+                      className="w-full bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 active:scale-[0.98] text-black font-extrabold py-3.5 px-4 rounded-2xl text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg shadow-emerald-500/10 disabled:opacity-50"
                     >
                       {loading ? (
                         <>
                           <RefreshCw className="w-4 h-4 animate-spin text-black" />
-                          <span>در حال ذخیره و پردازش در هسته وب‌سایت...</span>
+                          <span>ذخیره نهایی و همگام‌سازی...</span>
                         </>
                       ) : (
                         <>
                           <CheckCircle2 className="w-4 h-4 text-black" />
-                          <span>ذخیره نهایی و ثبت پیکربندی در پنل</span>
+                          <span>ثبت و ذخیره تنظیمات روی سرور</span>
                         </>
                       )}
                     </button>
                     
-                    <p className="text-[10px] text-white/50 leading-relaxed text-justify">
-                      💡 <strong>نکته مهم:</strong> دکمه بالا تنظیمات را برای همیشه در پایگاه داده وب اپلیکیشن ذخیره نگه می‌دارد تا در صورت بازدید مجدد به هیچ وجه پیکربندی را از دست ندهید.
-                    </p>
+                    <div className="bg-emerald-500/5 p-4 rounded-2xl border border-emerald-500/10 text-right space-y-1.5">
+                      <strong className="text-emerald-300 text-[11px] font-bold block">🌿 سینک خودکار با پایگاه داده Render:</strong>
+                      <p className="text-[10px] text-white/60 leading-relaxed text-justify">
+                        سیستم به طور خودکار تنظیمات شما را در فایل <code className="bg-emerald-950 px-1 py-0.5 rounded text-emerald-300 font-mono">user_garden_db.json</code> پایگاه سرور ذخیره می‌کند تا پس از راه‌اندازی‌های مجدد یا بستن مرورگر، پیکربندی مزارع شما باقی بماند.
+                      </p>
+                    </div>
                   </div>
+
                 </div>
 
-                {/* Right Column: Code Editor & Exporter (Grid span 7) */}
-                <div className="lg:col-span-7 bg-white/5 rounded-3xl p-6 border border-white/10 space-y-4 flex flex-col justify-between shadow-xl">
+                {/* Right Column: Dynamic Interactive Telegram Phone Simulation (Grid span 7) */}
+                <div className="lg:col-span-12 xl:col-span-7 grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
                   
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center pb-3 border-b border-white/10">
-                      <div className="flex items-center gap-2">
-                        <Code2 className="w-5 h-5 text-emerald-400" />
-                        <div>
-                          <h4 className="font-extrabold text-sm text-white">سورس تلگرام نهایی و اختصاصی</h4>
-                          <p className="text-[10px] text-white/40">آماده قرارگیری در پروژه گیت‌هاب جهت انتقال به خدمات ابری</p>
-                        </div>
-                      </div>
-                      <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-2.5 py-0.5 rounded-full select-none">bot.js</span>
-                    </div>
-
-                    <p className="text-[11px] text-white/60 leading-relaxed text-justify">
-                      این سورس کد به کمک متغیرهای بالا بازسازی شده است. آن را بردارید و در فایل <code className="bg-white/15 px-1 py-0.2 rounded font-mono text-emerald-300">bot.js</code> پروژه گیت‌هاب قرار دهید تا ترافیک تصاویر ارسالی را به این وب اپ متصل مجهز به Gemini بازپس‌گرداند:
-                    </p>
-
-                    {/* IDE Visual Dark Container */}
-                    <div className="relative bg-[#070b07] border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+                  {/* Smartphone Live Telegram Screen Frame (md:span 5) */}
+                  <div className="md:col-span-5 flex justify-center">
+                    <div className="w-[280px] h-[550px] bg-[#0d0f0d] rounded-[38px] border-[6px] border-[#202520] shadow-2xl relative overflow-hidden flex flex-col font-sans select-none ring-4 ring-emerald-500/5">
                       
-                      {/* Console Top Indicator bar */}
-                      <div className="flex items-center justify-between px-4 py-2.5 bg-black/50 border-b border-white/5">
-                        <div className="flex gap-1.5">
-                          <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
-                          <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
-                          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-                        </div>
-                        <span className="text-[10px] text-white/50 font-mono select-none">VS Code Engine - bot.js</span>
+                      {/* Top Phone Notch / Camera Pill */}
+                      <div className="absolute top-2 left-1/2 -translate-x-1/2 w-28 h-4.5 bg-[#202520] rounded-full z-40 flex items-center justify-around px-4">
+                        <span className="w-1.5 h-1.5 bg-[#121412] rounded-full" />
+                        <span className="w-8 h-1 bg-[#121412] rounded-full" />
                       </div>
 
-                      {/* Code pre box */}
-                      <div className="p-4 overflow-x-auto max-h-76 font-mono text-[10px] text-emerald-200/90 scrollbar text-left leading-relaxed">
-                        <pre className="whitespace-pre">{`const TelegramBot = require('node-telegram-bot-api');
+                      {/* Small Status Bar */}
+                      <div className="pt-6 px-5 pb-1 flex justify-between bg-[#17211b] text-[9px] text-white/80 z-15 select-none font-semibold font-mono tracking-wider">
+                        <span>9:41</span>
+                        <div className="flex gap-1 items-center">
+                          <span className="w-2.5 h-2.5 bg-white/20 rounded-[2px] relative"><span className="absolute right-0 top-0.5 w-1.5 h-1.5 bg-emerald-400 rounded-[1px]" /></span>
+                          <span>LTE</span>
+                        </div>
+                      </div>
+
+                      {/* Telegram Header */}
+                      <div className="bg-[#17211b] border-b border-[#202d24] px-4 py-2 flex items-center gap-2.5 text-right z-10 shadow-md">
+                        <div className="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-300 font-bold text-xs">
+                          🌱
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h5 className="text-white text-[11px] font-extrabold truncate">رویش‌بان گیاه‌پزشک 🧪</h5>
+                          <span className="text-[9px] text-emerald-400 flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                            <span>ربات فعال (bot)</span>
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Telegram Chat Wallpaper Area */}
+                      <div className="flex-1 bg-[#0b0e0c] p-3 overflow-y-auto space-y-3 flex flex-col text-[10px] leading-relaxed scrollbar">
+                        
+                        <div className="self-center bg-[#18231c]/50 backdrop-blur-sm text-emerald-300/80 rounded-full px-3 py-1 text-[8px] my-1 font-semibold">
+                          امروز
+                        </div>
+
+                        {/* Message 1: User sends start command */}
+                        <div className="self-start bg-[#1e2d24] text-white max-w-[85%] p-2 rounded-2xl rounded-tl-none border border-white/5 shadow-md">
+                          <span className="block text-[8px] text-emerald-400 font-bold mb-0.5">کاربر مزارع</span>
+                          /start
+                        </div>
+
+                        {/* Message 2: Bot responds with Welcome greeting (Updates live!) */}
+                        <div className="self-end bg-[#18251e] text-emerald-100 max-w-[85%] p-2.5 rounded-2xl rounded-tr-none border border-emerald-500/10 shadow-md text-right">
+                          <span className="block text-[8px] text-emerald-400 font-bold mb-0.5">پاسخ ربات رویش‌بان</span>
+                          <span className="whitespace-pre-wrap">{customWelcomeMsg}</span>
+                        </div>
+
+                        {/* Message 3: Simulated Plant Upload */}
+                        <div className="self-start bg-[#1e2d24] text-white max-w-[85%] p-1.5 rounded-2xl rounded-tl-none border border-white/5 shadow-md flex flex-col gap-1">
+                          <span className="block text-[8px] text-emerald-400 font-bold px-1 select-none">اسکن زراعی کاربر</span>
+                          <div className="w-40 h-24 bg-[#121a14] rounded-xl border border-white/5 overflow-hidden flex items-center justify-center relative">
+                            <img 
+                              src="https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?w=200&auto=format&fit=crop&q=60" 
+                              alt="Sample Tomato leaf"
+                              className="w-full h-full object-cover select-none"
+                              referrerPolicy="no-referrer"
+                            />
+                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                              <span className="bg-emerald-500/80 text-black px-2 py-0.5 rounded-md text-[8px] font-bold">ارسال عکس برگ گیاه 📸</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Message 4: Bot responds with Clinical Diagnosis Preview */}
+                        <div className="self-end bg-[#15231a] text-white max-w-[90%] p-2.5 rounded-2xl rounded-tr-none border border-emerald-500/20 shadow-lg text-right space-y-1">
+                          <span className="block text-[8px] text-emerald-400 font-bold mb-0.5">پاسخ آنالیز کلینیکال</span>
+                          <p className="text-emerald-300 font-bold text-[9px] border-b border-emerald-800/40 pb-1 flex items-center gap-1">
+                            <span>🌱 نام گیاه: گوجه‌فرنگی</span>
+                          </p>
+                          <p className="text-[9px] text-[#e2f1e8]">
+                            <strong>🏥 تشخیص عارضه:</strong> قارچ آلترناریا و لکه‌های موجی برگ
+                          </p>
+                          <p className="text-[9px] text-[#e2f1e8]/80 leading-snug">
+                            <strong>💡 نسخه درمانی:</strong> حذف برگ‌های پایینی آلوده، تهویه زهکشی گلدان و محلول‌پاشی با قارچ‌کش حفاظتی مانکوزب.
+                          </p>
+                        </div>
+
+                      </div>
+
+                      {/* Fake Input Row footer */}
+                      <div className="p-2.5 bg-[#17211b] border-t border-[#202d24] flex items-center gap-1.5 relative z-10">
+                        <div className="text-[12px] text-emerald-400 px-1 cursor-not-allowed">📎</div>
+                        <div className="flex-1 bg-[#101410] border border-white/5 rounded-full px-3 py-1 text-[8px] text-white/50 text-right">
+                          پیام خود را بنویسید...
+                        </div>
+                        <span className="text-emerald-400 text-[10px] px-1 cursor-not-allowed">⚡</span>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  {/* Code Exporter & Workstation Card (md:span 7) */}
+                  <div className="md:col-span-7 bg-white/5 rounded-3xl p-6 border border-white/10 space-y-4 flex flex-col justify-between shadow-xl">
+                    
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center pb-2 border-b border-white/10">
+                        <div className="flex items-center gap-2">
+                          <Code2 className="w-5 h-5 text-emerald-400" />
+                          <div>
+                            <h4 className="font-extrabold text-sm text-white">سورس نهایی و اختصاصی ربات (bot.js)</h4>
+                            <p className="text-[10px] text-white/40">اسکریپت کامل جهت اجرا در گیت‌هاب و هاست رندر</p>
+                          </div>
+                        </div>
+                        <span className="text-[10px] bg-emerald-500/15 text-emerald-300 font-mono px-2 py-0.5 rounded-full">bot.js</span>
+                      </div>
+
+                      <p className="text-[11px] text-white/60 leading-relaxed text-justify">
+                        این قطعه کد بر اساس پیکربندی فیلدهای بالا به صورت زنده بازنویسی شده است. آن را کپی نموده و در پروژه خود ذخیره قرار دهید:
+                      </p>
+
+                      {/* Mock Terminal/IDE */}
+                      <div className="relative bg-[#050805] border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+                        
+                        {/* Terminal Header */}
+                        <div className="flex items-center justify-between px-4 py-2 bg-black/40 border-b border-white/5">
+                          <div className="flex gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-red-500/60" />
+                            <span className="w-2 h-2 rounded-full bg-amber-500/60" />
+                            <span className="w-2 h-2 rounded-full bg-emerald-500/60" />
+                          </div>
+                          <span className="text-[9px] text-white/40 font-mono select-none">VS Code Engine - bot.js</span>
+                        </div>
+
+                        {/* Code area scrollable */}
+                        <div className="p-4 overflow-x-auto max-h-64 font-mono text-[9px] text-emerald-200/90 scrollbar text-left leading-relaxed">
+                          <pre className="whitespace-pre">{`const TelegramBot = require('node-telegram-bot-api');
 const axios = require('axios');
 
-const token = '${tgToken}';
+// Initialize with webhook endpoint of configured site
+const token = '${tgToken || "729402518:AAFlw9C_SampleToken"}';
 const bot = new TelegramBot(token, { polling: true });
 
-console.log('PlantCare Bot is starting Telegram listener...');
+console.log('Bot is reading Webhook from ${webhookUrl.replace('/api/telegram', '') || "https://plantcare2.onrender.com"}');
 
-// Start command custom greeting
+// Launch Command
 bot.onText(/\\/start/, (msg) => {
-  bot.sendMessage(msg.chat.id, \`${customWelcomeMsg}\`);
+  bot.sendMessage(msg.chat.id, \`${customWelcomeMsg || "سلام به ربات تشخیص گیاه خوش آمدید."}\`);
 });
 
-// Photo identifier listener to send base64 payloads to Express server
 bot.on('photo', async (msg) => {
   const chatId = msg.chat.id;
-  bot.sendMessage(chatId, "در حال بارگیری تصویر گیاه شما و ارسال به سرور کلینیک رویش‌بان... 🔄");
+  bot.sendMessage(chatId, "در حال اسکن و آنالیز تصویر توسط هوش مصنوعی رویش‌بان... 🔄");
 
   try {
     const photo = msg.photo[msg.photo.length - 1];
     const fileId = photo.file_id;
     const fileLink = await bot.getFileLink(fileId);
 
-    // Fetch photo stream
+    // Fetch stream as base64 segment
     const imageResponse = await axios.get(fileLink, { responseType: 'arraybuffer' });
     const buffer64 = Buffer.from(imageResponse.data).toString('base64');
     
-    // Call server identification route securely
-    const response = await axios.post('${webhookUrl.replace('/api/telegram', '')}/api/identify', {
+    // Call clinical identify endpoint on main App Server
+    const response = await axios.post('${webhookUrl.replace('/api/telegram', '') || "https://plantcare2.onrender.com"}/api/identify', {
       image: \`data:image/jpeg;base64,\${buffer64}\`,
       mode: 'both'
     });
@@ -1878,48 +2014,41 @@ bot.on('photo', async (msg) => {
 \`;
 
     bot.sendMessage(chatId, report);
-  } catch (error) {
-    console.error("Bot Error:", error);
-    bot.sendMessage(chatId, "⚠️ خطا در تحلیل اسکن. لطفاً مطمئن شوید که متغیرهای پیکربندی در وب‌هوک به درستی ذخیره شده باشند.");
+  } catch (err) {
+    console.error(err);
+    bot.sendMessage(chatId, "⚠️ خطا در تحلیل اسکن. لطفاً مطمئن شوید که آدرس وب‌هوک به درستی تنظیم شده باشد.");
   }
 });`}</pre>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Action row at bottom of Code block */}
-                  <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                    <button
-                      onClick={() => {
-                        const codeString = `// Telegram Bot Code Interface for GitHub & Render (bot.js)
-const TelegramBot = require('node-telegram-bot-api');
+                    {/* Exporter Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                      <button
+                        onClick={() => {
+                          const codeString = `const TelegramBot = require('node-telegram-bot-api');
 const axios = require('axios');
 
-const token = '${tgToken}';
+const token = '${tgToken || "729402518:AAFlw9C_SampleToken"}';
 const bot = new TelegramBot(token, { polling: true });
 
-console.log('PlantCare Bot is starting Telegram listener...');
-
-// Start prompt
 bot.onText(/\\/start/, (msg) => {
-  bot.sendMessage(msg.chat.id, \`${customWelcomeMsg}\`);
+  bot.sendMessage(msg.chat.id, \`${customWelcomeMsg || "سلام به ربات رویش‌بان خوش آمدید."}\`);
 });
 
-// Photo identifier listener
 bot.on('photo', async (msg) => {
   const chatId = msg.chat.id;
-  bot.sendMessage(chatId, "در حال بارگیری تصویر گیاه شما و ارسال به سرور کلینیک رویش‌بان... 🔄");
+  bot.sendMessage(chatId, "در حال اسکن و آنالیز تصویر توسط هوش مصنوعی رویش‌بان... 🔄");
 
   try {
     const photo = msg.photo[msg.photo.length - 1];
     const fileId = photo.file_id;
     const fileLink = await bot.getFileLink(fileId);
 
-    // Fetch photo stream
     const imageResponse = await axios.get(fileLink, { responseType: 'arraybuffer' });
     const buffer64 = Buffer.from(imageResponse.data).toString('base64');
     
-    // Call analysis endpoint
     const response = await axios.post('${webhookUrl.replace('/api/telegram', '')}/api/identify', {
       image: \`data:image/jpeg;base64,\${buffer64}\`,
       mode: 'both'
@@ -1932,71 +2061,88 @@ bot.on('photo', async (msg) => {
 📝 توضیحات:
 \${plant.description}
 
-💧 شرایط آبیاری: \${plant.careInfo.watering}
+💧 آبیاری: \${plant.careInfo.watering}
 ☀️ نوردهی: \${plant.careInfo.sunlight}
 🐾 سمیت: \${plant.careInfo.toxicity}
 
 🏥 تشخیص کلینیکال: \${plant.healthStatus.diagnoses}
-💡 نسخه درمانی: \${plant.healthStatus.treatment}
-\`;
+💡 نسخه درمانی: \${plant.healthStatus.treatment}\`;
 
     bot.sendMessage(chatId, report);
-  } catch (error) {
-    console.error(error);
-    bot.sendMessage(chatId, "⚠️ پوزش، اسکن گیاه با خطا مواجه شد. از صحت آدرس دامنه و اتصال اینترنت اطمینان حاصل کنید.");
+  } catch (err) {
+    console.error(err);
+    bot.sendMessage(chatId, "⚠️ خطا در تحلیل اسکن برگ گیاه.");
   }
 });`;
-                        navigator.clipboard.writeText(codeString);
-                        showToast("کد کامل و اختصاصی با موفقیت به حافظه موقت کپی شد! 📋", "success");
-                      }}
-                      className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-black font-bold py-2.5 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                    >
-                      <Code2 className="w-4 h-4" />
-                      <span>کپی کامل کدهای آماده ( bot.js )</span>
-                    </button>
-                    <a
-                      href="https://render.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-[#152015] hover:bg-[#1f301f] border border-white/10 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5"
-                    >
-                      <span>ورود به پرتال رندر (Render)</span>
-                      <ExternalLink className="w-3.5 h-3.5 text-emerald-400" />
-                    </a>
+                          navigator.clipboard.writeText(codeString);
+                          showToast("کد کامل و اختصاصی با موفقیت به حافظه موقت کپی شد! 📋", "success");
+                        }}
+                        className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold py-3 rounded-2xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-emerald-500/10"
+                      >
+                        <Code2 className="w-4 h-4" />
+                        <span>کپی کامل کدهای آماده ( bot.js )</span>
+                      </button>
+                      <a
+                        href="https://render.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-[#121c13] hover:bg-[#1a2b1b] border border-white/10 text-white font-extrabold py-3 px-4 rounded-2xl text-xs transition-all flex items-center justify-center gap-1.5"
+                      >
+                        <span>ورود به Render</span>
+                        <ExternalLink className="w-3.5 h-3.5 text-emerald-400" />
+                      </a>
+                    </div>
+
                   </div>
+
                 </div>
 
               </div>
 
-              {/* Step By Step Guide Timeline below */}
-              <div className="bg-white/5 backdrop-blur-md rounded-3xl p-6 border border-white/10 space-y-6">
-                <h4 className="font-extrabold text-sm text-emerald-300 flex items-center gap-2">
-                  <span>🗺️ نقشه راه و راهنمای دیپلوی فوق سریع در ۳ مرحله</span>
-                </h4>
+              {/* Step By Step Guide Timeline below with modern numbers */}
+              <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 space-y-8 shadow-xl">
+                <div className="border-b border-white/10 pb-4">
+                  <h4 className="font-extrabold text-base text-emerald-300 flex items-center gap-2">
+                    <span>🗺️ نقشه راه و راهنمای دیپلوی فوق سریع در ۳ مرحله</span>
+                  </h4>
+                  <p className="text-xs text-white/40 mt-1">روال زیر را جهت متصل و آنلاین نگه داشتن هوش مصنوعی به تلگرام طی نمایید</p>
+                </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-right">
                   
-                  <div className="bg-black/20 p-4 rounded-2xl border border-white/5 space-y-2 relative overflow-hidden">
-                    <span className="absolute top-2 left-3 text-4xl text-white/5 font-black font-mono">01</span>
-                    <strong className="text-emerald-400 text-xs font-bold block">مرحله ۱: ایجاد ربات و دریافت توکن</strong>
+                  {/* Step 1 */}
+                  <div className="bg-[#0b100c] p-6 rounded-2xl border border-white/5 space-y-3 relative overflow-hidden transition-all hover:border-emerald-500/20 group">
+                    <span className="absolute top-2 left-4 text-7xl text-white/5 font-black font-mono select-none group-hover:text-emerald-500/5 transition-all">1</span>
+                    <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs">
+                      ۰۱
+                    </div>
+                    <strong className="text-emerald-200 text-sm font-bold block">مرحله ۱: ایجاد ربات در تلگرام</strong>
                     <p className="text-[11px] text-white/60 leading-relaxed text-justify">
-                      وارد اکانت تلگرام شوید و ربات <code className="bg-black text-emerald-300 p-0.5 rounded px-1 font-mono">@BotFather</code> را استارت کنید. فرمان <code className="bg-black text-emerald-300 p-0.5 rounded px-1 font-mono">/newbot</code> را بفرستید، نام مناسب را انتخاب کنید و توکن ارائه‌شده را در فیلد تنظیمات بالا وارد کنید.
+                      در چت رسمی اکانت تلگرام وارد آیدی رسمی <code className="bg-black/40 text-emerald-300 p-0.5 rounded px-1.5 font-mono text-[10px]">@BotFather</code> شوید. پیام شروع <code className="bg-black/40 text-emerald-300 p-0.5 rounded px-1.5 font-mono text-[10px]">/newbot</code> را بنویسید، یک نام مناسب گزینش کنید و آدرس توکن اختصاصی ربات را در فرم ذخیره پنل درج نمایید.
                     </p>
                   </div>
 
-                  <div className="bg-black/20 p-4 rounded-2xl border border-white/5 space-y-2 relative overflow-hidden">
-                    <span className="absolute top-2 left-3 text-4xl text-white/5 font-black font-mono">02</span>
-                    <strong className="text-emerald-400 text-xs font-bold block">مرحله ۲: ست کردن متغیر محیطی در رندر</strong>
+                  {/* Step 2 */}
+                  <div className="bg-[#0b100c] p-6 rounded-2xl border border-white/5 space-y-3 relative overflow-hidden transition-all hover:border-emerald-500/20 group">
+                    <span className="absolute top-2 left-4 text-7xl text-white/5 font-black font-mono select-none group-hover:text-emerald-500/5 transition-all">2</span>
+                    <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs">
+                      ۰۲
+                    </div>
+                    <strong className="text-emerald-200 text-sm font-bold block">مرحله ۲: ست کردن کلید هوش مصنوعی در رندر</strong>
                     <p className="text-[11px] text-white/60 leading-relaxed text-justify">
-                      در پنل کاربری هاست رندر (Render) مربوط به وب اپلیکیشن خود، وارد تب <code className="bg-black text-white p-0.5 rounded px-1 font-mono font-bold">Environment</code> شده و مقدار متغیر جدید <code className="bg-black text-emerald-300 p-0.5 rounded px-1 font-mono">GEMINI_API_KEY</code> را وارد نمایید. بر روی دکمه آبی رنگ **Save changes** در زیر ردیف‌های متغیرها کلیک کنید تا تنظیمات اعمال شوند.
+                      وارد پنل اینترنتی رندر (Render) وب‌سایت خود شوید. به منوی کاربری <code className="bg-black/40 text-white p-0.5 rounded px-1.5 font-mono text-[10px] font-bold">Environment</code> مراجعه نموده و یک رکورد جدید به نام <code className="bg-black/40 text-emerald-300 p-0.5 rounded px-1.5 font-mono text-[10px]">TELEGRAM_TOKEN</code> (با مقدار توکن تلگرام) و متغیر <code className="bg-black/40 text-emerald-300 p-0.5 rounded px-1.5 font-mono text-[10px]">GEMINI_API_KEY</code> بسازید. در این صورت سیستم به طور خودکار توکن را همگام می‌کند!
                     </p>
                   </div>
 
-                  <div className="bg-black/20 p-4 rounded-2xl border border-white/5 space-y-2 relative overflow-hidden">
-                    <span className="absolute top-2 left-3 text-4xl text-white/5 font-black font-mono">03</span>
-                    <strong className="text-emerald-400 text-xs font-bold block">مرحله ۳: آپلود فایل bot.js به گیت‌هاب</strong>
+                  {/* Step 3 */}
+                  <div className="bg-[#0b100c] p-6 rounded-2xl border border-white/5 space-y-3 relative overflow-hidden transition-all hover:border-emerald-500/20 group">
+                    <span className="absolute top-2 left-4 text-7xl text-white/5 font-black font-mono select-none group-hover:text-emerald-500/5 transition-all">3</span>
+                    <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs">
+                      ۰۳
+                    </div>
+                    <strong className="text-emerald-200 text-sm font-bold block">مرحله ۳: آپلود کدهای آماده زراعت</strong>
                     <p className="text-[11px] text-white/60 leading-relaxed text-justify">
-                      کدهای تلگرامی اختصاصی را با زدن دکمه برگ زرین **کپی کامل کدهای آماده** بالا کپی کنید. فایل <code className="bg-black text-emerald-300 p-0.5 rounded px-1 font-mono">bot.js</code> را در روت کدهای پروژه گیت‌هاب قرار دهید و دک مانیتورینگ Render را دوباره ران کنید تا مربی رباتیک به سادگی متصل و آنلاین شود.
+                      با ضربه بر روی دکمه درخشان **کپی کامل کدهای آماده (bot.js)**، سورس تلگرام تولید شده را بردارید. کل کدهای بالا را درون فایل خالی به آدرس <code className="bg-black/40 text-emerald-300 p-0.5 rounded px-1.5 font-mono text-[10px]">bot.js</code> در روت شاخه‌های پروژه گیت‌هاب قرار داده و تغییرات را پوش (Commit & Push) نمایید تا پس از بیلد موفق، مربی رباتیک تلگرام شما پدیدار شود.
                     </p>
                   </div>
 
