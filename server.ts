@@ -596,7 +596,139 @@ app.post("/api/telegram-config", (req, res) => {
   res.json({ success: true, telegramSettings: db.telegramSettings });
 });
 
+// --- Telegram Webhook: helper functions ---
 
+async function sendTelegramMessage(token: string, chatId: number, text: string) {
+  try {
+    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, text }),
+    });
+  } catch (e) {
+    console.error("Error sending Telegram message:", e);
+  }
+}
+
+async function getTelegramFileBase64(token: string, fileId: string): Promise<string | null> {
+  try {
+    const fileInfoRes = await fetch(`https://api.telegram.org/bot${token}/getFile?file_id=${fileId}`);
+    const fileInfo: any = await fileInfoRes.json();
+    if (!fileInfo.ok) return null;
+    const filePath = fileInfo.result.file_path;
+    const fileRes = await fetch(`https://api.telegram.org/file/bot${token}/${filePath}`);
+    const arrayBuffer = await fileRes.arrayBuffer();
+    const base64 = Buffer.from(arrayBuffer).toString("base64");
+    const mimeType = filePath.endsWith(".png") ? "image/png" : "image/jpeg";
+    return `data:${mimeType};base64,${base64}`;
+  } catch (e) {
+    console.error("Error downloading Telegram file:", e);
+    return null;
+  }
+}
+
+// --- Telegram Webhook: main endpoint ---
+// This is the route that was MISSING. Telegram sends every incoming
+// message (text, photo, /start, etc.) here as an HTTP POST.
+
+app.post("/api/telegram", async (req, res) => {
+  // Acknowledge Telegram immediately so it doesn't retry/timeout.
+  res.sendStatus(200);
+
+  try {
+    const update = req.body;
+    const message = update.message;
+    if (!message) return;
+
+    const chatId = message.chat.id;
+    const db = readDB();
+    const token = db.telegramSettings?.tgToken || getTelegramEnv();
+
+    if (!token) {
+      console.error("Telegram token is not configured.");
+      return;
+    }
+
+    // /start command
+    if (message.text === "/start") {
+      const welcome =
+        db.telegramSettings?.customWelcomeMsg ||
+        "سلام به ربات تشخیص گیاه رویش‌بان خوش آمدید 🌿. تصویر گیاه را بفرستید تا فوراً آن را معرفی و عارضه‌یابی کنم.";
+      await sendTelegramMessage(token, chatId, welcome);
+      return;
+    }
+
+    // Photo message -> plant identification & disease diagnosis
+    if (message.photo && message.photo.length > 0) {
+      if (db.subscription.tier === "free" && db.subscription.scansCount >= db.subscription.scansLimit) {
+        await sendTelegramMessage(
+          token,
+          chatId,
+          "محدودیت طرح رایگان: شما به سقف شناسایی‌های رایگان رسیده‌اید. لطفاً حساب خود را ارتقا دهید."
+        );
+        return;
+      }
+
+      const largestPhoto = message.photo[message.photo.length - 1];
+      const base64Image = await getTelegramFileBase64(token, largestPhoto.file_id);
+      if (!base64Image) {
+        await sendTelegramMessage(token, chatId, "متاسفانه در دریافت تصویر مشکلی پیش آمد. دوباره تلاش کنید.");
+        return;
+      }
+
+      await sendTelegramMessage(token, chatId, "🔍 در حال تحلیل تصویر گیاه شما هستم، چند لحظه صبر کنید...");
+
+      const client = getAIClient();
+      const matches = base64Image.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
+      const mimeType = matches ? matches[1] : "image/jpeg";
+      const base64Data = matches ? matches[2] : base64Image;
+
+      const promptText = `این تصویر یک گیاه را تحلیل کن و به زبان فارسی پاسخ بده. نام گیاه، وضعیت سلامتی، علائم احتمالی بیماری و یک دستورالعمل کوتاه مراقبتی را در چند پاراگراف کوتاه و خوانا برای پیام تلگرام بنویس (بدون فرمت JSON، فقط متن ساده).`;
+
+      const response = await client.models.generateContent({
+        model: "gemini-3.5-flash",
+        contents: { parts: [{ inlineData: { mimeType, data: base64Data } }, { text: promptText }] },
+      });
+
+      db.subscription.scansCount = (db.subscription.scansCount || 0) + 1;
+      writeDB(db);
+
+      await sendTelegramMessage(token, chatId, response.text || "متاسفانه نتوانستم تصویر را تحلیل کنم.");
+      return;
+    }
+
+    // Plain text message -> chat with Gemini gardening advisor "رویش‌بان"
+    if (message.text) {
+      if (db.subscription.tier === "free" && db.subscription.chatsCount >= db.subscription.chatsLimit) {
+        await sendTelegramMessage(
+          token,
+          chatId,
+          "محدودیت طرح رایگان: شما به سقف پیام‌های گفتگوی رایگان رسیده‌اید. لطفاً حساب خود را ارتقا دهید."
+        );
+        return;
+      }
+
+      const client = getAIClient();
+      const response = await client.models.generateContent({
+        model: "gemini-3.5-flash",
+        contents: [{ role: "user", parts: [{ text: message.text }] }],
+        config: {
+          systemInstruction: `شما یک باغبان مجرب، مشاور کشاورزی متخصص و کارشناس گیاه‌پزشکی هستید. نام شما "رویش‌بان" است.
+لحن شما صمیمی، دلسوزانه و بسیار علمی است. به زبان فارسی شیوا و کوتاه (مناسب پیام تلگرام) پاسخ دهید.
+همواره نکات بهداشتی و زراعی مناسب را تأکید کنید و در آخر با یک عبارت انگیزاننده گفتگو را تمام کنید.`,
+        },
+      });
+
+      db.subscription.chatsCount = (db.subscription.chatsCount || 0) + 1;
+      writeDB(db);
+
+      await sendTelegramMessage(token, chatId, response.text || "متوجه پیام شما نشدم، لطفاً دوباره بنویسید.");
+      return;
+    }
+  } catch (error) {
+    console.error("Error handling Telegram webhook:", error);
+  }
+});
 // Serve Frontend Setup
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {
