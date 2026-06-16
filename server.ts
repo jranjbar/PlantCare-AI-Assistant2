@@ -28,7 +28,7 @@ function getWebhookEnv() {
 
 // Helper to read database
 function readDB() {
-  let db: any = { plants: [], notifications: [], cropPlans: [], subscription: null, telegramSettings: null };
+let db: any = { plants: [], notifications: [], cropPlans: [], subscription: null, telegramSettings: null, telegramSessions: {} };
   try {
     if (fs.existsSync(DB_PATH)) {
       const data = fs.readFileSync(DB_PATH, "utf-8");
