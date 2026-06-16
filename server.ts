@@ -28,7 +28,7 @@ function getWebhookEnv() {
 
 // Helper to read database
 function readDB() {
-let db: any = { plants: [], notifications: [], cropPlans: [], subscription: null, telegramSettings: null, telegramSessions: {} };
+  let db: any = { plants: [], notifications: [], cropPlans: [], subscription: null, telegramSettings: null, telegramSessions: {} };
   try {
     if (fs.existsSync(DB_PATH)) {
       const data = fs.readFileSync(DB_PATH, "utf-8");
@@ -51,10 +51,14 @@ let db: any = { plants: [], notifications: [], cropPlans: [], subscription: null
     };
   }
 
+  // Enforce default telegram sessions store if not present
+  if (!db.telegramSessions) {
+    db.telegramSessions = {};
+  }
+
   // Enforce default telegram settings if not present, with environment fallbacks
   const envTgToken = getTelegramEnv();
   const envWebhook = getWebhookEnv();
-
   if (!db.telegramSettings) {
     db.telegramSettings = {
       tgToken: envTgToken || "729402518:AAFlw9C_SampleToken",
@@ -71,6 +75,7 @@ let db: any = { plants: [], notifications: [], cropPlans: [], subscription: null
       db.telegramSettings.webhookUrl = envWebhook;
     }
   }
+
   return db;
 }
 
@@ -97,13 +102,15 @@ if (!fs.existsSync(DB_PATH)) {
       scansLimit: 3,
       plansLimit: 1,
       chatsLimit: 5
-    }
+    },
+    telegramSessions: {}
   });
 }
 
 // Secure server-side Gemini AI client initialization
 const apiKey = process.env.GEMINI_API_KEY;
 let ai: GoogleGenAI | null = null;
+
 if (apiKey) {
   ai = new GoogleGenAI({
     apiKey: apiKey,
@@ -148,6 +155,7 @@ app.get("/api/health", (req, res) => {
 app.post("/api/identify", async (req, res) => {
   try {
     const { image, mode } = req.body; // base64 payload, mode: 'identify' | 'disease' | 'both'
+
     if (!image) {
       return res.status(400).json({ error: "لطفاً تصویر گیاه خود را بارگذاری کنید." });
     }
@@ -165,7 +173,6 @@ app.post("/api/identify", async (req, res) => {
     const matches = image.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
     let mimeType = "image/jpeg";
     let base64Data = image;
-
     if (matches && matches.length === 3) {
       mimeType = matches[1];
       base64Data = matches[2];
@@ -291,6 +298,7 @@ app.post("/api/crop-plan", async (req, res) => {
 
     const promptText = `
 Create a comprehensive timeline-based cultivation and care plan (طرح جامع کشت، نگهداری و برداشت) for "${plantName}" in Persian.
+
 Details provided:
 - Method: ${plantingMethod || 'سفت‌کاری یا گلدانی یا صحرایی'}
 - Experience level: ${experienceLevel || 'مبتدی'}
@@ -408,12 +416,10 @@ app.post("/api/chat", async (req, res) => {
       const matches = currentPlantImage.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
       let mimeType = "image/jpeg";
       let base64Data = currentPlantImage;
-
       if (matches && matches.length === 3) {
         mimeType = matches[1];
         base64Data = matches[2];
       }
-
       parts.push({
         inlineData: {
           mimeType: mimeType,
@@ -596,14 +602,28 @@ app.post("/api/telegram-config", (req, res) => {
   res.json({ success: true, telegramSettings: db.telegramSettings });
 });
 
+// =====================================================================
 // --- Telegram Webhook: helper functions ---
+// =====================================================================
 
-async function sendTelegramMessage(token: string, chatId: number, text: string) {
+const MAIN_MENU_KEYBOARD = {
+  keyboard: [
+    ["🔍 شناسایی و عارضه‌یابی گیاه", "🌱 طرح کشت تا برداشت"],
+    ["💬 مشاوره با کارشناس", "📋 گیاهان و یادآورهای من"],
+  ],
+  resize_keyboard: true,
+};
+
+async function sendTelegramMessage(token: string, chatId: number, text: string, replyMarkup?: any) {
   try {
     await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat_id: chatId, text }),
+      body: JSON.stringify({
+        chat_id: chatId,
+        text,
+        ...(replyMarkup ? { reply_markup: replyMarkup } : {}),
+      }),
     });
   } catch (e) {
     console.error("Error sending Telegram message:", e);
@@ -628,8 +648,6 @@ async function getTelegramFileBase64(token: string, fileId: string): Promise<str
 }
 
 // --- Telegram Webhook: main endpoint ---
-// This is the route that was MISSING. Telegram sends every incoming
-// message (text, photo, /start, etc.) here as an HTTP POST.
 
 app.post("/api/telegram", async (req, res) => {
   // Acknowledge Telegram immediately so it doesn't retry/timeout.
@@ -642,6 +660,7 @@ app.post("/api/telegram", async (req, res) => {
 
     const chatId = message.chat.id;
     const db = readDB();
+    if (!db.telegramSessions) db.telegramSessions = {};
     const token = db.telegramSettings?.tgToken || getTelegramEnv();
 
     if (!token) {
@@ -649,12 +668,103 @@ app.post("/api/telegram", async (req, res) => {
       return;
     }
 
-    // /start command
-    if (message.text === "/start") {
+    const session = db.telegramSessions[chatId] || { state: "idle" };
+
+    // /start , /menu, or typing "منو" -> show welcome + main menu keyboard
+    if (message.text === "/start" || message.text === "/menu" || message.text === "منو") {
       const welcome =
         db.telegramSettings?.customWelcomeMsg ||
-        "سلام به ربات تشخیص گیاه رویش‌بان خوش آمدید 🌿. تصویر گیاه را بفرستید تا فوراً آن را معرفی و عارضه‌یابی کنم.";
-      await sendTelegramMessage(token, chatId, welcome);
+        "سلام به ربات تشخیص گیاه رویش‌بان خوش آمدید 🌿";
+      db.telegramSessions[chatId] = { state: "idle" };
+      writeDB(db);
+      await sendTelegramMessage(
+        token,
+        chatId,
+        `${welcome}\n\nاز منوی پایین یکی از قابلیت‌ها را انتخاب کنید، یا مستقیماً عکس گیاه یا سؤال خود را بفرستید.`,
+        MAIN_MENU_KEYBOARD
+      );
+      return;
+    }
+
+    // Menu button: شناسایی گیاه
+    if (message.text === "🔍 شناسایی و عارضه‌یابی گیاه") {
+      db.telegramSessions[chatId] = { state: "idle" };
+      writeDB(db);
+      await sendTelegramMessage(token, chatId, "📷 لطفاً عکس گیاه خود را بفرستید تا آن را شناسایی و عارضه‌یابی کنم.");
+      return;
+    }
+
+    // Menu button: طرح کشت تا برداشت
+    if (message.text === "🌱 طرح کشت تا برداشت") {
+      db.telegramSessions[chatId] = { state: "awaiting_crop_name" };
+      writeDB(db);
+      await sendTelegramMessage(
+        token,
+        chatId,
+        "🌱 نام گیاه یا محصولی که می‌خواهید برایش طرح کشت تا برداشت بسازم را بنویسید (مثلاً: گوجه‌فرنگی، زعفران)."
+      );
+      return;
+    }
+
+    // Menu button: مشاوره با کارشناس
+    if (message.text === "💬 مشاوره با کارشناس") {
+      db.telegramSessions[chatId] = { state: "idle" };
+      writeDB(db);
+      await sendTelegramMessage(token, chatId, "💬 سؤال خود را درباره نگهداری، بیماری یا پرورش گیاهان بنویسید تا کارشناس «رویش‌بان» پاسخ دهد.");
+      return;
+    }
+
+    // Menu button: گیاهان و یادآورهای من
+    if (message.text === "📋 گیاهان و یادآورهای من") {
+      const plants = db.plants || [];
+      const notifs = (db.notifications || []).filter((n: any) => !n.completed);
+      let reply = "";
+      if (plants.length === 0 && notifs.length === 0) {
+        reply = "هنوز هیچ گیاهی یا یادآوری ثبت نشده. می‌توانید از پنل وب گیاه یا یادآور جدید اضافه کنید.";
+      } else {
+        if (plants.length > 0) {
+          reply +=
+            "🌿 گیاهان شما:\n" +
+            plants.map((p: any, i: number) => `${i + 1}. ${p.nameFarsi || p.name || "گیاه بدون نام"}`).join("\n") +
+            "\n\n";
+        }
+        if (notifs.length > 0) {
+          reply += "⏰ یادآورهای فعال:\n" + notifs.map((n: any, i: number) => `${i + 1}. ${n.title || n.text || "یادآور"}`).join("\n");
+        }
+      }
+      await sendTelegramMessage(token, chatId, reply, MAIN_MENU_KEYBOARD);
+      return;
+    }
+
+    // Multi-step flow: awaiting crop name -> generate crop plan
+    if (session.state === "awaiting_crop_name" && message.text) {
+      db.telegramSessions[chatId] = { state: "idle" };
+      writeDB(db);
+
+      if (db.subscription.tier === "free" && db.subscription.plansCount >= db.subscription.plansLimit) {
+        await sendTelegramMessage(
+          token,
+          chatId,
+          "محدودیت طرح رایگان: ساخت طرح کشت رایگان شما به پایان رسیده. لطفاً حساب را ارتقا دهید.",
+          MAIN_MENU_KEYBOARD
+        );
+        return;
+      }
+
+      await sendTelegramMessage(token, chatId, "⏳ در حال طراحی برنامه کشت تا برداشت، چند لحظه صبر کنید...");
+
+      const client = getAIClient();
+      const promptText = `یک طرح جامع کشت تا برداشت برای "${message.text}" به زبان فارسی بنویس. شامل مراحل از کاشت تا برداشت، مدت‌زمان تقریبی هر مرحله، نکات آبیاری، کوددهی و هشدارهای آفت باشد. متن را کوتاه، مرحله‌به‌مرحله و مناسب پیام تلگرام (بدون JSON) بنویس.`;
+
+      const response = await client.models.generateContent({
+        model: "gemini-3.5-flash",
+        contents: promptText,
+      });
+
+      db.subscription.plansCount = (db.subscription.plansCount || 0) + 1;
+      writeDB(db);
+
+      await sendTelegramMessage(token, chatId, response.text || "متاسفانه نتوانستم طرح کشت بسازم.", MAIN_MENU_KEYBOARD);
       return;
     }
 
@@ -664,7 +774,8 @@ app.post("/api/telegram", async (req, res) => {
         await sendTelegramMessage(
           token,
           chatId,
-          "محدودیت طرح رایگان: شما به سقف شناسایی‌های رایگان رسیده‌اید. لطفاً حساب خود را ارتقا دهید."
+          "محدودیت طرح رایگان: شما به سقف شناسایی‌های رایگان رسیده‌اید. لطفاً حساب خود را ارتقا دهید.",
+          MAIN_MENU_KEYBOARD
         );
         return;
       }
@@ -693,17 +804,18 @@ app.post("/api/telegram", async (req, res) => {
       db.subscription.scansCount = (db.subscription.scansCount || 0) + 1;
       writeDB(db);
 
-      await sendTelegramMessage(token, chatId, response.text || "متاسفانه نتوانستم تصویر را تحلیل کنم.");
+      await sendTelegramMessage(token, chatId, response.text || "متاسفانه نتوانستم تصویر را تحلیل کنم.", MAIN_MENU_KEYBOARD);
       return;
     }
 
-    // Plain text message -> chat with Gemini gardening advisor "رویش‌بان"
+    // Default: plain text -> chat with Gemini gardening advisor "رویش‌بان"
     if (message.text) {
       if (db.subscription.tier === "free" && db.subscription.chatsCount >= db.subscription.chatsLimit) {
         await sendTelegramMessage(
           token,
           chatId,
-          "محدودیت طرح رایگان: شما به سقف پیام‌های گفتگوی رایگان رسیده‌اید. لطفاً حساب خود را ارتقا دهید."
+          "محدودیت طرح رایگان: شما به سقف پیام‌های گفتگوی رایگان رسیده‌اید. لطفاً حساب خود را ارتقا دهید.",
+          MAIN_MENU_KEYBOARD
         );
         return;
       }
@@ -722,13 +834,14 @@ app.post("/api/telegram", async (req, res) => {
       db.subscription.chatsCount = (db.subscription.chatsCount || 0) + 1;
       writeDB(db);
 
-      await sendTelegramMessage(token, chatId, response.text || "متوجه پیام شما نشدم، لطفاً دوباره بنویسید.");
+      await sendTelegramMessage(token, chatId, response.text || "متوجه پیام شما نشدم، لطفاً دوباره بنویسید.", MAIN_MENU_KEYBOARD);
       return;
     }
   } catch (error) {
     console.error("Error handling Telegram webhook:", error);
   }
 });
+
 // Serve Frontend Setup
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {
