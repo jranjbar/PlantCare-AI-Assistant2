@@ -1,6 +1,0 @@
-{
-  "name": "PlantCare AI Assistant",
-  "description": "پنل هوشمند شناسایی گیاهان، تشخیص بیماری‌ها، جدول هوشمند کشت و کار و یادآوری مراقبت‌های گیاهی",
-  "requestFramePermissions": ["camera"],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
