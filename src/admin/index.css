@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Vazirmatn", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* پالت اصلی: سبز جنگلی عمیق + سایه‌ی مریم‌گلی برای پس‌زمینه + کهربا/خاکی برای هشدارها */
+  --color-forest-950: #0d2218;
+  --color-forest-900: #14301f;
+  --color-forest-800: #1b4332;
+  --color-forest-700: #265c45;
+  --color-forest-600: #2f7d5a;
+  --color-forest-500: #3f9c6f;
+  --color-sage-100: #eef3ea;
+  --color-sage-50: #f6f8f3;
+  --color-amber-500: #e0a458;
+  --color-amber-600: #c68a3e;
+  --color-terracotta-500: #c1502e;
+  --color-terracotta-100: #f6e3da;
+}
+
+body {
+  font-family: var(--font-sans);
+  direction: rtl;
+  text-align: right;
+  background-color: var(--color-sage-50);
+  color: #1c1e19;
+}
+
+.font-mono-data {
+  font-family: var(--font-mono);
+  direction: ltr;
+  display: inline-block;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.02);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(27, 67, 50, 0.25);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(27, 67, 50, 0.45);
+}

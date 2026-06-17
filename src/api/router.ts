@@ -1,0 +1,31 @@
+import { Router } from 'express';
+import { healthRouter } from './healthRoutes';
+import { authRouter } from './authRoutes';
+import { identifyRouter } from './identifyRoutes';
+import { cropPlanRouter } from './cropPlanRoutes';
+import { chatRouter } from './chatRoutes';
+import { usersRouter } from './usersRoutes';
+import { plantsRouter } from './plantsRoutes';
+import { notificationsRouter } from './notificationsRoutes';
+import { recommendationRouter } from './recommendationRoutes';
+import { subscriptionRouter } from './subscriptionRoutes';
+import { telegramConfigRouter } from './telegramConfigRoutes';
+import { telegramWebhookRouter, memoryRouter } from './telegramWebhookRoute';
+import { overviewRouter } from './overviewRoutes';
+
+export const apiRouter = Router();
+
+apiRouter.use(healthRouter);
+apiRouter.use(authRouter);
+apiRouter.use(identifyRouter);
+apiRouter.use(cropPlanRouter);
+apiRouter.use(chatRouter);
+apiRouter.use(usersRouter);
+apiRouter.use(plantsRouter);
+apiRouter.use(notificationsRouter);
+apiRouter.use(recommendationRouter);
+apiRouter.use(subscriptionRouter);
+apiRouter.use(telegramConfigRouter);
+apiRouter.use(telegramWebhookRouter);
+apiRouter.use(memoryRouter);
+apiRouter.use(overviewRouter);
